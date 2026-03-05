@@ -7,17 +7,9 @@ services:
     healthCheckPath: /health
     envVars:
       - key: PORT
-        value: "18789"
-      - key: OPENCLAW_STATE_DIR
-        value: /tmp/.openclaw
-      - key: OPENCLAW_WORKSPACE_DIR
-        value: /tmp/workspace
-      - key: OPENCLAW_DATA_DIR
-        value: /tmp/data
-      - key: OPENCLAW_CONFIG_DIR
-        value: /tmp/config
-      - key: OPENCLAW_LOG_DIR
-        value: /tmp/logs
+        value: "8080"
+      - key: GEMINI_API_KEY
+        sync: false
       - key: SETUP_PASSWORD
         sync: false
       - key: OPENCLAW_GATEWAY_TOKEN
