@@ -1,9 +1,13 @@
 FROM ghcr.io/coollabsio/openclaw:latest
 
-# Pre-create all tmp directories at image build time
-RUN mkdir -p /tmp/.openclaw /tmp/workspace /tmp/data /tmp/config /tmp/logs
+# Remove the browser upstream block from nginx config
+RUN sed -i '/upstream browser/,/}/d' /etc/nginx/conf.d/openclaw.conf && \
+    sed -i '/proxy_pass http:\/\/browser/d' /etc/nginx/conf.d/openclaw.conf
 
-# Override entrypoint to use /tmp paths
+# Redirect /data to /tmp to avoid permission errors
+RUN mkdir -p /tmp/.openclaw /tmp/workspace /tmp/data /tmp/config /tmp/logs && \
+    ln -sf /tmp/data /data 2>/dev/null || true
+
 ENV OPENCLAW_STATE_DIR=/tmp/.openclaw \
     OPENCLAW_WORKSPACE_DIR=/tmp/workspace \
     OPENCLAW_DATA_DIR=/tmp/data \
