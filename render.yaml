@@ -3,8 +3,8 @@ services:
     name: openclaw
     runtime: docker
     plan: free
+    dockerfilePath: ./Dockerfile.render
     healthCheckPath: /health
-    startCommand: mkdir -p /tmp/.openclaw /tmp/workspace /tmp/data /tmp/config /tmp/logs && node dist/index.js
     envVars:
       - key: PORT
         value: "18789"
