@@ -1,0 +1,14 @@
+FROM ghcr.io/coollabsio/openclaw:latest
+
+# Pre-create all tmp directories at image build time
+RUN mkdir -p /tmp/.openclaw /tmp/workspace /tmp/data /tmp/config /tmp/logs
+
+# Override entrypoint to use /tmp paths
+ENV OPENCLAW_STATE_DIR=/tmp/.openclaw \
+    OPENCLAW_WORKSPACE_DIR=/tmp/workspace \
+    OPENCLAW_DATA_DIR=/tmp/data \
+    OPENCLAW_CONFIG_DIR=/tmp/config \
+    OPENCLAW_LOG_DIR=/tmp/logs \
+    PORT=18789
+
+EXPOSE 18789
