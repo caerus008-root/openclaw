@@ -1,15 +1,16 @@
 FROM ghcr.io/coollabsio/openclaw:latest
 
-# Find and fix the nginx config wherever it lives
-RUN find / -name "*.conf" 2>/dev/null | xargs grep -l "upstream browser" 2>/dev/null | \
-    xargs -I{} sed -i '/upstream browser/,/^}/d' {} ; \
-    find / -name "*.conf" 2>/dev/null | xargs grep -l "proxy_pass http://browser" 2>/dev/null | \
-    xargs -I{} sed -i '/proxy_pass http:\/\/browser/d' {} ; \
-    true
+# Find and patch the entrypoint script - replace all /data with /tmp/data
+RUN find / -name "entrypoint*" -o -name "entrypoint.sh" 2>/dev/null | \
+    xargs grep -l "/data" 2>/dev/null | \
+    xargs -I{} sed -i 's|/data|/tmp/data|g' {} ; true
 
-# Symlink /data to /tmp/data to fix permission errors
-RUN mkdir -p /tmp/.openclaw /tmp/workspace /tmp/data /tmp/config /tmp/logs && \
-    rm -rf /data && ln -sf /tmp/data /data || true
+# Also patch any other scripts that reference /data
+RUN grep -rl '"/data"' /app 2>/dev/null | xargs sed -i 's|"/data"|"/tmp/data"|g' ; true
+RUN grep -rl "'/data'" /app 2>/dev/null | xargs sed -i "s|'/data'|'/tmp/data'|g" ; true
+
+# Pre-create all needed tmp directories
+RUN mkdir -p /tmp/.openclaw /tmp/workspace /tmp/data /tmp/config /tmp/logs /tmp/data/linuxbrew
 
 ENV OPENCLAW_STATE_DIR=/tmp/.openclaw \
     OPENCLAW_WORKSPACE_DIR=/tmp/workspace \
