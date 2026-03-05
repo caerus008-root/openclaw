@@ -1,4 +1,7 @@
 FROM ghcr.io/openclaw/openclaw:latest
 
+# Cap Node.js heap to stay within Render's 512MB free tier RAM
+ENV NODE_OPTIONS="--max-old-space-size=400"
 ENV PORT=8080
+
 EXPOSE 8080
