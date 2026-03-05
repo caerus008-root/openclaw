@@ -1,12 +1,15 @@
 FROM ghcr.io/coollabsio/openclaw:latest
 
-# Remove the browser upstream block from nginx config
-RUN sed -i '/upstream browser/,/}/d' /etc/nginx/conf.d/openclaw.conf && \
-    sed -i '/proxy_pass http:\/\/browser/d' /etc/nginx/conf.d/openclaw.conf
+# Find and fix the nginx config wherever it lives
+RUN find / -name "*.conf" 2>/dev/null | xargs grep -l "upstream browser" 2>/dev/null | \
+    xargs -I{} sed -i '/upstream browser/,/^}/d' {} ; \
+    find / -name "*.conf" 2>/dev/null | xargs grep -l "proxy_pass http://browser" 2>/dev/null | \
+    xargs -I{} sed -i '/proxy_pass http:\/\/browser/d' {} ; \
+    true
 
-# Redirect /data to /tmp to avoid permission errors
+# Symlink /data to /tmp/data to fix permission errors
 RUN mkdir -p /tmp/.openclaw /tmp/workspace /tmp/data /tmp/config /tmp/logs && \
-    ln -sf /tmp/data /data 2>/dev/null || true
+    rm -rf /data && ln -sf /tmp/data /data || true
 
 ENV OPENCLAW_STATE_DIR=/tmp/.openclaw \
     OPENCLAW_WORKSPACE_DIR=/tmp/workspace \
