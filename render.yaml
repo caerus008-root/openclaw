@@ -4,15 +4,21 @@ services:
     runtime: docker
     plan: free
     healthCheckPath: /health
+    startCommand: mkdir -p /tmp/.openclaw /tmp/workspace /tmp/data /tmp/config /tmp/logs && node dist/index.js
     envVars:
       - key: PORT
-        value: "8080"
+        value: "18789"
+      - key: OPENCLAW_STATE_DIR
+        value: /tmp/.openclaw
+      - key: OPENCLAW_WORKSPACE_DIR
+        value: /tmp/workspace
+      - key: OPENCLAW_DATA_DIR
+        value: /tmp/data
+      - key: OPENCLAW_CONFIG_DIR
+        value: /tmp/config
+      - key: OPENCLAW_LOG_DIR
+        value: /tmp/logs
       - key: SETUP_PASSWORD
         sync: false
-      - key: OPENCLAW_STATE_DIR
-        value: /data/.openclaw
-      - key: OPENCLAW_WORKSPACE_DIR
-        value: /data/workspace
       - key: OPENCLAW_GATEWAY_TOKEN
         generateValue: true
-    
